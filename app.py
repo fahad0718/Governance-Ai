@@ -298,7 +298,7 @@ profile = None
 if df is not None:
     profile = profile_dataset(df)
     rows, columns = profile['rows'], profile['columns']
-    st.success(f"Dataset loaded: {rows:,} rows x {columns:,} columns")
+    st.success("Dataset loaded: " + str(rows) + " rows x " + str(columns) + " columns")
     a, b, c, d = st.columns(4)
     a.metric("Rows", f"{profile['rows']:,}")
     b.metric("Columns", f"{profile['columns']:,}")
