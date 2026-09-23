@@ -200,7 +200,7 @@ def governance_markdown(data, checks, profile=None):
             "",
             "## Uploaded dataset profile",
             f"- Rows: **{profile['rows']:,}**",
-            f"- Columns: **{profile['columns']:,}**",
+            f"- Columns: **{len(profile['columns']):,}**",
             f"- Missing cells: **{profile['missing_cells']:,}** ({profile['missing_rate']}% average cell missingness)",
             f"- Duplicate rows: **{profile['duplicate_rows']:,}**",
         ]
@@ -242,7 +242,7 @@ def pdf_report(data, checks, profile=None):
         pdf.set_font("Helvetica", "", 10)
         for k, v in [
             ("Rows", f"{profile['rows']:,}"),
-            ("Columns", f"{profile['columns']:,}"),
+            ("Columns", f"{len(profile['columns']):,}"),
             ("Missing cells", f"{profile['missing_cells']:,}"),
             ("Average missingness", f"{profile['missing_rate']}%"),
             ("Duplicate rows", f"{profile['duplicate_rows']:,}"),
@@ -297,11 +297,11 @@ elif "demo_df" in st.session_state:
 profile = None
 if df is not None:
     profile = profile_dataset(df)
-    rows, columns = profile['rows'], profile['columns']
-    st.success("Dataset loaded: " + str(rows) + " rows x " + str(columns) + " columns")
+    rows, column_count = profile['rows'], len(profile['columns'])
+    st.success("Dataset loaded: " + str(rows) + " rows x " + str(column_count) + " columns")
     a, b, c, d = st.columns(4)
     a.metric("Rows", f"{profile['rows']:,}")
-    b.metric("Columns", f"{profile['columns']:,}")
+    b.metric("Columns", f"{len(profile['columns']):,}")
     c.metric("Missing cells", f"{profile['missing_cells']:,}")
     d.metric("Duplicate rows", f"{profile['duplicate_rows']:,}")
     with st.expander("Preview dataset"):
