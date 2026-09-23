@@ -47,3 +47,8 @@ streamlit run app.py
 ## Scope
 
 This repository is an academic prototype for AI governance documentation. The generated assessment is not legal or regulatory certification and should be reviewed by responsible humans before real-world use.
+
+
+## Current prototype capabilities
+
+The governance engine checks documentation completeness across purpose, limitations, data provenance, privacy, fairness, security, monitoring, and performance metrics. It also flags models whose stated purpose indicates a potentially high-impact domain for additional human review. The dashboard reports an overall Low/Medium/High risk level and produces recommended actions for identified gaps.
