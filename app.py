@@ -28,21 +28,30 @@ DEFAULT_FIELDS = {
 
 def risk_check(data: dict):
     checks = []
-    text_blob = " ".join(str(v).lower() for v in data.values())
     rules = [
-        ("Documentation completeness", bool(data.get("Purpose") and data.get("Intended Use") and data.get("Limitations")), "Add purpose, intended use, and limitations."),
-        ("Data provenance", bool(data.get("Data Source")), "Document where the dataset came from and how it was collected."),
-        ("Privacy", bool(data.get("Privacy Review")), "Document personal-data handling, retention, and access controls."),
-        ("Fairness", bool(data.get("Fairness Evaluation")), "Evaluate performance across relevant subgroups."),
-        ("Security", bool(data.get("Security Notes")), "Document access, threat, and security controls."),
-        ("Monitoring", bool(data.get("Monitoring Plan")), "Define post-deployment monitoring and retraining criteria.")
+        ('Purpose & intended use', bool(data.get('Purpose') and data.get('Intended Use')), 'Document the problem, intended users, and prohibited uses.'),
+        ('Model limitations', bool(data.get('Limitations')), 'Describe known limitations, failure modes, and out-of-scope use.'),
+        ('Data provenance', bool(data.get('Data Source')), 'Document the dataset source, collection process, and provenance.'),
+        ('Privacy', bool(data.get('Privacy Review')), 'Document personal-data handling, retention, consent/legal basis, and access controls.'),
+        ('Fairness', bool(data.get('Fairness Evaluation')), 'Evaluate relevant subgroup performance and document the methodology.'),
+        ('Security', bool(data.get('Security Notes')), 'Document access controls, threats, abuse cases, and security mitigations.'),
+        ('Monitoring', bool(data.get('Monitoring Plan')), 'Define post-deployment monitoring, drift checks, and retraining criteria.'),
+        ('Performance metrics', bool(data.get('Metrics')), 'Report appropriate evaluation metrics and test conditions.')
     ]
     for area, ok, action in rules:
-        checks.append({"Area": area, "Status": "Complete" if ok else "Gap", "Recommendation": "" if ok else action})
-    if any(x in text_blob for x in ["medical", "healthcare", "credit", "loan", "employment", "hiring"]):
-        checks.append({"Area": "High-impact use", "Status": "Review", "Recommendation": "Require stronger human oversight, validation, and domain-specific governance before deployment."})
+        checks.append({'Area': area, 'Status': 'Complete' if ok else 'Gap', 'Recommendation': '' if ok else action})
+    purpose = (data.get('Purpose') or '').lower()
+    terms = ['medical','healthcare','credit','loan','hiring','employment','admission','insurance','criminal']
+    if any(term in purpose for term in terms):
+        checks.append({'Area':'High-impact domain','Status':'Review','Recommendation':'Use domain-specific validation, documented human oversight, and additional governance controls before deployment.'})
     return checks
 
+def risk_level(checks):
+    gaps = sum(c['Status'] == 'Gap' for c in checks)
+    reviews = sum(c['Status'] == 'Review' for c in checks)
+    if gaps >= 5 or reviews >= 1: return 'High'
+    if gaps >= 2: return 'Medium'
+    return 'Low'
 def model_card(data, checks):
     return {
         "model_details": {"name": data["Model Name"], "version": data["Model Version"], "type": data["Model Type"], "algorithm": data["Training Algorithm"]},
@@ -128,6 +137,7 @@ if st.button("Generate Governance Package", type="primary", use_container_width=
     st.session_state["datasheet"] = datasheet
     st.session_state["data"] = data
     st.session_state["completeness"] = completeness
+    st.session_state["risk_level"] = risk_level(checks)
 
 if "checks" in st.session_state:
     st.divider()
@@ -137,8 +147,14 @@ if "checks" in st.session_state:
     gaps = sum(x["Status"] != "Complete" for x in st.session_state["checks"])
     c2.metric("Governance gaps", gaps)
     c3.metric("Checks performed", len(st.session_state["checks"]))
+    st.metric("Overall governance risk", st.session_state["risk_level"])
 
     st.dataframe(pd.DataFrame(st.session_state["checks"]), use_container_width=True, hide_index=True)
+
+    st.subheader("3. Recommended actions")
+    for row in st.session_state["checks"]:
+        if row["Status"] != "Complete":
+            st.warning("**" + row["Area"] + " — " + row["Status"] + "**: " + row["Recommendation"])
 
     tab1,tab2,tab3=st.tabs(["Model Card","Dataset Datasheet","JSON / Export"])
     with tab1:
