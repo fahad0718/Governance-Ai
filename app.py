@@ -297,7 +297,8 @@ elif "demo_df" in st.session_state:
 profile = None
 if df is not None:
     profile = profile_dataset(df)
-    st.success(f"Dataset loaded: {profile["rows"]:,} rows × {profile["columns"]:,} columns")
+    rows, columns = profile['rows'], profile['columns']
+    st.success(f"Dataset loaded: {rows:,} rows x {columns:,} columns")
     a, b, c, d = st.columns(4)
     a.metric("Rows", f"{profile['rows']:,}")
     b.metric("Columns", f"{profile['columns']:,}")
