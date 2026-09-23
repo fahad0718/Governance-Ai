@@ -2,33 +2,85 @@
 
 ## AI Governance Documentation & Model Card Generation Platform
 
-A Streamlit-based prototype that takes structured AI/ML model and dataset information and generates:
+**Group 16:** Vaarun Saini, Fahad Maksud Khan, Aryan Khalkho
 
-- Model Cards
-- Dataset Datasheets
-- Governance gap / risk checks
-- Documentation completeness score
+Governance-Ai is an academic Streamlit platform that turns AI/ML model and dataset information into structured governance documentation and an actionable risk review.
+
+## What the project does
+
+**Input**
+- Model name, version, type and training algorithm
+- Purpose, intended users and intended use
+- Limitations and performance metrics
+- Dataset source, records and features
+- Privacy, fairness, security and monitoring notes
+- Optional CSV dataset
+
+**Processing**
+- Documentation completeness scoring
+- Governance gap detection
+- High-impact-domain review
+- Dataset quality profiling
+- Risk classification: Low / Medium / High
+- Recommended governance actions
+
+**Output**
+- Model Card
+- Dataset Datasheet
+- Governance Assessment
 - JSON governance package
+- Markdown governance report
 - PDF governance report
-
-### Project
-**Group 16**
-
-### Team
-- Vaarun Saini
-- Fahad Maksud Khan
-- Aryan Khalkho
 
 ## Architecture
 
-Model / Dataset Information → Governance Checks → Model Card + Dataset Datasheet → Governance Report
+```
+User / CSV
+   ↓
+Model & Dataset Metadata
+   ↓
+Dataset Profiler ─────────────┐
+   ↓                         │
+Governance Rules Engine       │
+   ↓                         │
+Completeness + Risk + Gaps ←─┘
+   ↓
+Model Card + Datasheet + Governance Report
+   ↓
+JSON / Markdown / PDF exports
+```
+
+## Governance checks
+
+1. Purpose & intended use
+2. Model limitations
+3. Data provenance
+4. Privacy
+5. Fairness
+6. Security
+7. Monitoring
+8. Performance metrics
+9. High-impact-domain review when relevant
+
+## Dataset profiling
+
+When a CSV is uploaded, the platform reports:
+- row and column count
+- missing cells and average missingness
+- duplicate rows
+- data types
+- unique values
+- numeric minimum/maximum
+- column preview
 
 ## Run locally
 
 ```bash
 python -m venv .venv
+
 # Windows
-.venv\Scripts\activate
+.venv\\Scripts\\activate
+
 # macOS/Linux
 source .venv/bin/activate
 
@@ -36,19 +88,39 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Demo workflow
+## Demo
 
-1. Enter model and dataset information.
-2. Optionally upload a CSV dataset.
-3. Click **Generate Governance Package**.
-4. Review the completeness score and governance gaps.
-5. Download the JSON package and PDF report.
+1. Open the app.
+2. Click **Load demo dataset** or upload a CSV.
+3. Review/edit model and governance information.
+4. Click **Generate Governance Package**.
+5. Review the dashboard and recommended actions.
+6. Download JSON, Markdown, and PDF outputs.
 
-## Scope
+## Project structure
 
-This repository is an academic prototype for AI governance documentation. The generated assessment is not legal or regulatory certification and should be reviewed by responsible humans before real-world use.
+```
+Governance-Ai/
+├── app.py
+├── requirements.txt
+├── sample_data.csv
+├── README.md
+├── .gitignore
+└── docs/
+    ├── PROJECT_REPORT.md
+    └── DEMO_GUIDE.md
+```
 
+## Limitations
 
-## Current prototype capabilities
+This is a classroom prototype. The rule-based governance assessment is not legal advice, regulatory certification, or a substitute for domain experts, security testing, privacy review, fairness analysis, or human oversight.
 
-The governance engine checks documentation completeness across purpose, limitations, data provenance, privacy, fairness, security, monitoring, and performance metrics. It also flags models whose stated purpose indicates a potentially high-impact domain for additional human review. The dashboard reports an overall Low/Medium/High risk level and produces recommended actions for identified gaps.
+## Future scope
+
+- LLM-assisted narrative generation with an optional API key
+- More formal fairness metrics by subgroup
+- Model evaluation artifact upload
+- Versioned governance history
+- Role-based access control
+- Database storage and audit logs
+- Standards-specific checklists
